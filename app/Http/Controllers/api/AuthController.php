@@ -4,6 +4,7 @@ namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use Illuminate\Foundation\Auth\User as AuthUser;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -33,8 +34,8 @@ class AuthController extends Controller
    public function login(Request $request)
    {
        $credentials=$request->validate([
-           'email'=>'',
-           'password'=>'',
+           'email'=>'required|email|exists:users,email',
+           'password'=>'required',
            'remember'=>'boolean'
        ]);
        $remember=$credentials['remember']??false;
@@ -44,12 +45,25 @@ class AuthController extends Controller
            return response([
                'error'=>"Credentials incorrect"],422);
        }
-       $token=auth()->user->createToken('myAppToken')->plainTextToken;
+       $user=auth('sanctum')->user();
+    //    return response($user);
+       $token=$user->createToken('myAppToken')->plainTextToken;
+   
        $response=[
            'user'=>auth()->user(),
            'token'=>$token,
        ];
        return response($response,200);
 
+   }
+
+   public function logout(Request $request)
+   { /** @var User $user */
+       $user=auth('sanctum')->user();
+    //    return response($user);
+       $user->tokens()->delete();
+       return response([
+           'success'=>true
+       ]);
    }
 }

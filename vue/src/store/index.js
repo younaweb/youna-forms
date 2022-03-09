@@ -25,12 +25,21 @@ const store= createStore({
         login({commit},user){
             return axiosClient.post('/login',user)
             .then(({data})=>{
-                // console.log(data);
+                
                 commit('setUser',data.user);
                 commit('setToken',data.token)
 
 
             });
+        },
+        logoutAction({commit}){
+            return axiosClient.post('/logout')
+            .then((response)=>{
+                // console.log(response)
+                 commit('logout')
+            }).catch(er=>{
+                console.log(er.response)
+            })
         }
     },
     mutations:{
@@ -45,6 +54,7 @@ const store= createStore({
         logout(state){
             state.user.data={};
             state.user.token=null;
+            sessionStorage.removeItem("TOKEN");
         }
     },
     modules:{},

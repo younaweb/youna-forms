@@ -117,8 +117,10 @@ export default {
   },
   methods:{
     logout(){
-      this.$store.commit('logout');
-      this.$router.push({name:'Login'});
+      this.$store.dispatch('logoutAction').then(()=>{
+
+        this.$router.push({name:'Login'});
+      })
     }
   },
   setup() {

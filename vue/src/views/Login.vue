@@ -6,13 +6,15 @@
                 <div>
                     <label class="block" for="email">Email</label>
                             <input type="text" placeholder="Email"  v-model="user.email"         
-                                class="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-600">
-                            <span class="text-xs tracking-wide text-red-600">Email field is required </span>
+                                class="w-full px-4 py-2 mt-2 border  rounded-md focus:outline-none focus:ring-1 focus:ring-blue-600">
+                            <span class="text-xs  text-red-600" v-if="msgError.email">{{msgError.email[0]}}</span>
                 </div>
                 <div class="mt-4">
                     <label class="block">Password</label>
                             <input type="password" placeholder="Password" v-model="user.password"
                                 class="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-600">
+                            <span class="text-xs  text-red-600" v-if="msgError.password">{{msgError.password[0]}}</span>
+
                 </div>
                 <div class="mt-4">
                     <label class="block">Remember me</label>
@@ -32,17 +34,22 @@
 <script setup>
 import store from '../store'
 import { useRouter } from 'vue-router'
+import {ref} from 'vue'
 const router = useRouter()
 const user={
     email:'',
     password:'',
     remember:false
 }
+let msgError=ref('')
 function login(ev){
     ev.preventDefault();
     store.dispatch('login',user).then(()=>{
         router.push({name:'Dashboard'})
-    })
+    }).catch(er=>{
+        
+                msgError.value=er.response.data.errors;
+        });
 }
 
 </script>
