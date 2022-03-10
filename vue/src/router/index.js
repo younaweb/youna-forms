@@ -4,6 +4,7 @@ import DefaultLayout from '../components/DefaultLayout.vue'
 import AuthLayout from '../components/AuthLayout.vue'
 import Dashboard from '../views/Dashboard.vue'
 import Forms from '../views/Forms.vue'
+import FormView from '../views/FormView.vue'
 import Register from '../views/Register.vue'
 import store from '../store'
 
@@ -19,7 +20,9 @@ const routes=[
         },
         children:[
             {path:'/dashboard',name:'Dashboard',component:Dashboard},
-            {path:'/forms',name:'Forms',component:Forms}
+            {path:'/forms',name:'Forms',component:Forms},
+            {path:'/form/create',name:'FormCreate',component:FormView},
+            {path:'/form/:id',name:'FormView',component:FormView},
         ]
     },
     {
