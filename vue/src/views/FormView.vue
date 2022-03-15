@@ -6,6 +6,7 @@
             </h1>
             <button
                 v-if="route.params.id"
+                @click="deleteForm(form)"
                 class="bg-red-500 flex text-white px-32 py-3 rounded-md text-1xl font-medium hover:bg-red-700 transition duration-300"
             >
                 <svg
@@ -25,9 +26,9 @@
                 delete form
             </button>
         </template>
-
+<!-- <pre>{{model}}</pre> -->
         <!-- form -->
-        <form action="" class="w-1/2 mx-auto">
+        <form action="" class="w-2/3 mx-auto">
             <div class="shadow sm:rounded-md sm:overflow-hidden">
                 <div class="px-4 py-5 bg-white space-y-6 sm:p-6">
                     <!-- image -->
@@ -36,7 +37,14 @@
                             Photo
                         </label>
                         <div class="mt-1 flex items-center">
+                            <img
+                                v-if="model.image"
+                                :src="model.image"
+                                class="inline-block h-12 w-12 overflow-hidden bg-gray-100"
+                                alt=""
+                            />
                             <span
+                                v-else
                                 class="inline-block h-12 w-12 overflow-hidden bg-gray-100"
                             >
                                 <svg
@@ -56,7 +64,6 @@
                                 <input
                                     type="file"
                                     class="absolute left-0 top-0 right-0 bottom-0 opacity-0"
-                                   
                                 />
                                 Change
                             </button>
@@ -75,7 +82,7 @@
                             name="title"
                             id="title"
                             autocomplete="title"
-                             v-model="model.title"
+                            v-model="model.title"
                             class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
                         />
                     </div>
@@ -92,7 +99,7 @@
                             <textarea
                                 id="description"
                                 name="description"
-                                 v-model="model.description"
+                                v-model="model.description"
                                 rows="3"
                                 class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-full sm:text-sm border border-gray-300 rounded-md"
                                 placeholder="tape description here"
@@ -111,7 +118,7 @@
                             type="date"
                             name="title"
                             id="title"
-                             v-model="model.expire_date"
+                            v-model="model.expire_date"
                             autocomplete="title"
                             class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
                         />
@@ -123,7 +130,7 @@
                             id="active"
                             name="active"
                             type="checkbox"
-                             v-model="model.status"
+                            v-model="model.status"
                             class="focus:ring-indigo-500 h-5 w-5 text-indigo-600 border-gray-300 rounded"
                         />
                         <label
@@ -134,8 +141,47 @@
                     </div>
 
                     <!-- end active -->
+                    <!-- start questions -->
+                    <hr />
+                    <div class="flex justify-between">
+                        <h3 class="text-3xl">Questions</h3>
+                        <button
+                            class="bg-gray-700 text-white  sm:p-2 rounded-md  sm:text-sm font-medium hover:bg-gray-500 transition duration-300"
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                class="h-4 w-4 -mt-1 inline-block"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M12 4v16m8-8H4"
+                                />
+                            </svg>
+                             Add Question 
+                        </button>
+                    </div>
+                    <!-- end questions -->
+                        <div v-if="!model.questions" class="text-gray-500 text-center">No Questions Yet !!</div>
+                        <div v-else v-for="(question,index) in model.questions" :key="question.id">
+                        <QuestionEditor 
+                        :question="question"
+                        :index="index"
+                        @change="changeQuestion"
+                        @addQuestion="addQuestion"
+                        @deleteQuestion="deleteQuestion"
+                        />
+                        </div>
+                        
+                        
+                        
                     <!-- save -->
-                    <div class="px-4 py-3  text-right sm:px-6">
+                        <hr>
+                    <div class="px-4 py-3 text-right sm:px-6">
                         <button
                             type="submit"
                             class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
@@ -152,8 +198,10 @@
 
 <script setup>
 import PageComponent from "../components/PageComponent.vue";
+import QuestionEditor from "../components/question/QuestionEditor.vue";
 import { ref } from "vue";
 import { useRouter, useRoute } from "vue-router";
+import store from "../store";
 const route = useRoute();
 const router = useRouter();
 
@@ -168,6 +216,16 @@ let model = ref({
     expire_date: null,
     questions: [],
 });
+
+if (route.params.id) {
+    model.value = store.state.forms.find((s) => s.id == route.params.id);
+    console.log(model.value);
+}
+function deleteForm(form){
+  if(confirm('Are you sure to delete this form?')){
+
+  }
+}
 </script>
 
 <style></style>
