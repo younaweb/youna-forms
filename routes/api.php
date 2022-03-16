@@ -20,6 +20,7 @@ Route::middleware('auth:sanctum')->group(function(){
         return $request->user();
     });
     Route::post('/logout',[AuthController::class,'logout'])->name('logout');
+    Route::resource('/forms',AuthController::class);
 });
 
 Route::post('/register',[AuthController::class,'register'])->name('register');
