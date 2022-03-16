@@ -146,6 +146,7 @@
                     <div class="flex justify-between">
                         <h3 class="text-3xl">Questions</h3>
                         <button
+                         @click.prevent="addQuestion()"
                             class="bg-gray-700 text-white  sm:p-2 rounded-md  sm:text-sm font-medium hover:bg-gray-500 transition duration-300"
                         >
                             <svg
@@ -175,6 +176,7 @@
                         @addQuestion="addQuestion"
                         @deleteQuestion="deleteQuestion"
                         />
+                        <hr class="mt-4"/>
                         </div>
                         
                         
@@ -199,6 +201,7 @@
 <script setup>
 import PageComponent from "../components/PageComponent.vue";
 import QuestionEditor from "../components/question/QuestionEditor.vue";
+import { v4 as uuidv4 } from "uuid";
 import { ref } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import store from "../store";
@@ -226,6 +229,23 @@ function deleteForm(form){
 
   }
 }
+
+function addQuestion(index) {
+  const newQuestion = {
+    id: uuidv4(),
+    type: "text",
+    question: "",
+    description: null,
+    data: {},
+  };
+  model.value.questions.splice(index, 0, newQuestion);
+}
+function deleteQuestion(question) {
+  model.value.questions = model.value.questions.filter((q) => q !== question);
+}
+
+
+
 </script>
 
 <style></style>
