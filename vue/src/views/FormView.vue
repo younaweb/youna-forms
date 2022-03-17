@@ -28,7 +28,7 @@
         </template>
 <!-- <pre>{{model}}</pre> -->
         <!-- form -->
-        <form action="" class="w-2/3 mx-auto">
+        <form action="" class="w-2/3 mx-auto" @submit.prevent="saveForm">
             <div class="shadow sm:rounded-md sm:overflow-hidden">
                 <div class="px-4 py-5 bg-white space-y-6 sm:p-6">
                     <!-- image -->
@@ -244,6 +244,16 @@ function deleteQuestion(question) {
   model.value.questions = model.value.questions.filter((q) => q !== question);
 }
 
+function saveForm() {
+    store.dispatch('saveFormInfo',model.value)
+    .then((response)=>{
+        router.push({
+            name:'FormView',
+            params:{id:response.data.id}
+        })
+    })
+    .catch();
+}
 
 
 </script>

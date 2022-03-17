@@ -170,9 +170,42 @@ const store= createStore({
             }).catch(er=>{
                 console.log(er.response)
             })
+        },
+
+        saveFormInfo({commit},model){
+          let response;
+          if(model.id){
+            return axiosClient.put('/forms/'+model.id,model)
+            .then((response)=>{
+              commit('updateForm',response.data)
+              return response.data;
+            })
+          }else{
+
+            return axiosClient.post('/forms',model)
+            .then((response)=>{
+              commit('createForm',response.data)
+              return response.data;
+            })
+
+          }
         }
     },
     mutations:{
+      createForm(state,res){
+        state.forms.push(res.data);
+        //  === state.forms=[...state.forms,data];
+      },
+      updateForm(state,res){
+        state.forms=state.forms.map((f)=>{
+          if(f.id=res.data.id){
+            return res.data
+          }
+          return f;
+        })
+
+
+      },
         setUser(state,userdata){
             state.user.data=userdata
         },

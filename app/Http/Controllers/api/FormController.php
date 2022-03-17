@@ -32,15 +32,26 @@ class FormController extends Controller
         $data=$request->validate([
             
             'title' => 'required|string|max:1000',
-            'image' => 'nullable|string',
+            // 'image' => 'nullable|string',
            
             'status' => 'required|boolean',
             'description' => 'nullable|string',
             'expire_date' => 'nullable|date|after:tomorrow',
-            'questions' => 'array',
+            'questions' => '',
         ]);
-        $data['user_id']=auth()->user->id;
-        $response=Form::create($data);
+        $data['user_id']=auth()->user()->id;
+      
+        
+        // return $data;
+        $response=Form::create([
+            'title' => $data['title'],
+            
+           'user_id'=>$data['user_id'],
+            'status' => $data['status'],
+            'description' => $data['description'],
+            'expire_date' => $data['expire_date'],
+            
+        ]);
         return new FormResource($response);
 
     }
@@ -74,12 +85,12 @@ class FormController extends Controller
         }
         $data=$request->validate([
             'title' => 'required|string|max:1000',
-            'image' => 'string',
+            
            
             'status' => 'required|boolean',
             'description' => 'nullable|string',
             'expire_date' => 'nullable|date|after:tomorrow',
-            'questions' => 'array'
+           
         ]);
         $data['user_id']=auth()->user->id;
         $response=$form->update($data);
