@@ -173,7 +173,7 @@ const store= createStore({
         },
 
         saveFormInfo({commit},model){
-          let response;
+          delete model.image_url; 
           if(model.id){
             return axiosClient.put('/forms/'+model.id,model)
             .then((response)=>{
@@ -189,6 +189,12 @@ const store= createStore({
             })
 
           }
+        },
+        deleteForm({commit},form){
+          return axiosClient.delete('/forms/'+form)
+          .then((response)=>
+          commit('deleteSingleForm',form)
+          )
         }
     },
     mutations:{
@@ -218,6 +224,9 @@ const store= createStore({
             state.user.data={};
             state.user.token=null;
             sessionStorage.removeItem("TOKEN");
+        },
+        deleteSingleForm(state,form){
+          state.forms=state.forms.filter((f)=>f.id !==form);
         }
     },
     modules:{},

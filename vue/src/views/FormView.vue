@@ -6,7 +6,7 @@
             </h1>
             <button
                 v-if="route.params.id"
-                @click="deleteForm(form)"
+                @click="deleteForm(model)"
                 class="bg-red-500 flex text-white px-32 py-3 rounded-md text-1xl font-medium hover:bg-red-700 transition duration-300"
             >
                 <svg
@@ -38,8 +38,8 @@
                         </label>
                         <div class="mt-1 flex items-center">
                             <img
-                                v-if="model.image"
-                                :src="model.image"
+                                v-if="model.image_url"
+                                :src="model.image_url"
                                 class="inline-block h-12 w-12 overflow-hidden bg-gray-100"
                                 alt=""
                             />
@@ -63,6 +63,7 @@
                             >
                                 <input
                                     type="file"
+                                    @change="chooseImage"
                                     class="absolute left-0 top-0 right-0 bottom-0 opacity-0"
                                 />
                                 Change
@@ -226,10 +227,25 @@ if (route.params.id) {
 }
 function deleteForm(form){
   if(confirm('Are you sure to delete this form?')){
-
+      store.dispatch('deleteForm',form).then(()=>{
+          router.push({
+              name:'forms'
+          })
+      });
   }
 }
-
+function chooseImage(ev) {
+  const file = ev.target.files[0];
+  const reader = new FileReader();
+  reader.onload = () => {
+    // The field to send on backend and apply validations
+    model.value.image = reader.result;
+    // The field to display here
+    model.value.image_url = reader.result;
+    ev.target.value = "";
+  };
+  reader.readAsDataURL(file);
+}
 function addQuestion(index) {
   const newQuestion = {
     id: uuidv4(),
