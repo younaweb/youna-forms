@@ -203,7 +203,7 @@
 import PageComponent from "../components/PageComponent.vue";
 import QuestionEditor from "../components/question/QuestionEditor.vue";
 import { v4 as uuidv4 } from "uuid";
-import { ref } from "vue";
+import { ref,watch } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import store from "../store";
 const route = useRoute();
@@ -222,9 +222,18 @@ let model = ref({
 });
 
 if (route.params.id) {
-    model.value = store.state.forms.find((s) => s.id == route.params.id);
-    console.log(model.value);
+    store.dispatch('getCurrentForm',route.params.id);
 }
+// Watch to current survey data change and when this happens we update local model
+watch(
+  () => store.state.currentForm.data,
+  (newVal, oldVal) => {
+    model.value = {
+      ...JSON.parse(JSON.stringify(newVal)),
+      status: !!newVal.status,
+    };
+  }
+);
 function deleteForm(form){
   if(confirm('Are you sure to delete this form?')){
       store.dispatch('deleteForm',form).then(()=>{

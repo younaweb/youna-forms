@@ -10,6 +10,10 @@ const store= createStore({
             token:sessionStorage.getItem("TOKEN"),
         },
         questionTypes:["text", "select", "radio", "checkbox", "textarea"],
+        currentForm: {
+          data: {},
+          loading: false,
+        },
         forms: [
             {
               id: 1,
@@ -142,6 +146,20 @@ const store= createStore({
     },
     getters:{},
     actions:{
+      getCurrentForm({ commit }, id) {
+        commit("setCurrentFormLoading", true);
+        return axiosClient
+          .get(`/forms/${id}`)
+          .then((res) => {
+            commit("setCurrentForm", res.data);
+            commit("setCurrentFormLoading", false);
+            return res;
+          })
+          .catch((err) => {
+            commit("setCurrentFormLoading", false);
+            throw err;
+          });
+      },
         register({commit},user){
             return axiosClient.post('/register',user)
             .then(({data})=>{
@@ -177,14 +195,14 @@ const store= createStore({
           if(model.id){
             return axiosClient.put('/forms/'+model.id,model)
             .then((response)=>{
-              commit('updateForm',response.data)
+              commit('setCurrentForm',response.data)
               return response.data;
             })
           }else{
 
             return axiosClient.post('/forms',model)
             .then((response)=>{
-              commit('createForm',response.data)
+              commit('setCurrentForm',response.data)
               return response.data;
             })
 
@@ -198,19 +216,11 @@ const store= createStore({
         }
     },
     mutations:{
-      createForm(state,res){
-        state.forms.push(res.data);
-        //  === state.forms=[...state.forms,data];
+      setCurrentFormLoading: (state, loading) => {
+        state.currentForm.loading = loading;
       },
-      updateForm(state,res){
-        state.forms=state.forms.map((f)=>{
-          if(f.id=res.data.id){
-            return res.data
-          }
-          return f;
-        })
-
-
+      setCurrentForm: (state, form) => {
+        state.currentForm.data = form.data;
       },
         setUser(state,userdata){
             state.user.data=userdata

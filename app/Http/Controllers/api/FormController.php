@@ -34,7 +34,7 @@ class FormController extends Controller
         $data=$request->validate([
             
             'title' => 'required|string|max:1000',
-            // 'image' => 'nullable|string',
+            'image' => 'nullable|string',
            
             'status' => 'required|boolean',
             'description' => 'nullable|string',
@@ -71,7 +71,7 @@ class FormController extends Controller
     public function show(Form $form)
     {
 
-        if($form->user_id != auth()->user->id){
+        if($form->user_id != auth()->user()->id){
             return abort(403,'Unauthorized action');
         }
         return new FormResource($form);
@@ -86,7 +86,7 @@ class FormController extends Controller
      */
     public function update(Request $request, Form $form)
     {
-        if($form->user_id != auth()->user->id){
+        if($form->user_id != auth()->user()->id){
             return abort(403,'Unauthorized action');
         }
         $data=$request->validate([
@@ -98,9 +98,21 @@ class FormController extends Controller
             'expire_date' => 'nullable|date|after:tomorrow',
            
         ]);
-        $data['user_id']=auth()->user->id;
+         // Check if image was given and save on local file system
+      if (isset($data['image'])) {
+        $relativePath  = $this->saveImage($data['image']);
+        $data['image'] = $relativePath;
+        // if the is an old image, delete it
+        if($form->image){
+            $absolutePath=public_path($form->image);
+            File::delete($absolutePath);
+        }
+    }
+
+        $data['user_id']=auth()->user()->id;
         $response=$form->update($data);
-        return new FormResource($response);
+   
+        return new FormResource($form);
 
     }
 
