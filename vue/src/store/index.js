@@ -208,11 +208,9 @@ const store= createStore({
 
           }
         },
-        deleteForm({commit},form){
-          return axiosClient.delete('/forms/'+form)
-          .then((response)=>
-          commit('deleteSingleForm',form)
-          )
+        deleteForm({commit},id){
+          return axiosClient.delete('/forms/'+id);
+      
         }
     },
     mutations:{
@@ -235,9 +233,7 @@ const store= createStore({
             state.user.token=null;
             sessionStorage.removeItem("TOKEN");
         },
-        deleteSingleForm(state,form){
-          state.forms=state.forms.filter((f)=>f.id !==form);
-        }
+      
     },
     modules:{},
 });

@@ -124,11 +124,15 @@ class FormController extends Controller
      */
     public function destroy(Form $form)
     {
-        if($form->user_id != auth()->user->id){
+        if($form->user_id != auth()->user()->id){
             return abort(403,'Unauthorized action');
         }
-        return $form;
         $form->delete();
+        // if the is an old image, delete it
+        if($form->image){
+            $absolutePath=public_path($form->image);
+            File::delete($absolutePath);
+        }
         return response('',204);
 
 

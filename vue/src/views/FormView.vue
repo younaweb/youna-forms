@@ -6,7 +6,7 @@
             </h1>
             <button
                 v-if="route.params.id"
-                @click="deleteForm(model)"
+                @click="deleteForm(route.params.id)"
                 class="bg-red-500 flex text-white px-32 py-3 rounded-md text-1xl font-medium hover:bg-red-700 transition duration-300"
             >
                 <svg
@@ -27,8 +27,11 @@
             </button>
         </template>
 <!-- <pre>{{model}}</pre> -->
+
+<div class="w-2/3 mx-auto" v-if="formLoading">Loading ...</div>
+
         <!-- form -->
-        <form action="" class="w-2/3 mx-auto" @submit.prevent="saveForm">
+        <form v-else action="" class="w-2/3 mx-auto" @submit.prevent="saveForm">
             <div class="shadow sm:rounded-md sm:overflow-hidden">
                 <div class="px-4 py-5 bg-white space-y-6 sm:p-6">
                     <!-- image -->
@@ -203,7 +206,7 @@
 import PageComponent from "../components/PageComponent.vue";
 import QuestionEditor from "../components/question/QuestionEditor.vue";
 import { v4 as uuidv4 } from "uuid";
-import { ref,watch } from "vue";
+import { ref,watch,computed } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import store from "../store";
 const route = useRoute();
@@ -221,6 +224,8 @@ let model = ref({
     questions: [],
 });
 
+const formLoading=computed(()=>store.state.currentForm.loading);
+
 if (route.params.id) {
     store.dispatch('getCurrentForm',route.params.id);
 }
@@ -234,12 +239,12 @@ watch(
     };
   }
 );
-function deleteForm(form){
+function deleteForm(id){
   if(confirm('Are you sure to delete this form?')){
-      store.dispatch('deleteForm',form).then(()=>{
+      store.dispatch('deleteForm',id).then(()=>{
           router.push({
-              name:'forms'
-          })
+            name: "Forms",
+      });
       });
   }
 }
