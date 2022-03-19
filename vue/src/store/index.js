@@ -14,7 +14,11 @@ const store= createStore({
           data: {},
           loading: false,
         },
-        forms: [
+        forms:{
+          loading:false,
+          data:{}
+        },
+        forms1: [
             {
               id: 1,
               title: "TheCodeholic YouTube channel content",
@@ -146,6 +150,15 @@ const store= createStore({
     },
     getters:{},
     actions:{
+      getAllForms({commit}){
+        commit('setFormsLoading',true);
+        return axiosClient.get('/forms')
+        .then(res=>{
+          commit('setFormsLoading',false);
+          commit('setAllForms',res.data);
+          
+        })
+      },
       getCurrentForm({ commit }, id) {
         commit("setCurrentFormLoading", true);
         return axiosClient
@@ -220,6 +233,12 @@ const store= createStore({
       setCurrentForm: (state, form) => {
         state.currentForm.data = form.data;
       },
+      setFormsLoading: (state, loading) => {
+        state.forms.loading = loading;
+      },
+      setAllForms: (state, form) => {
+        state.forms.data = form.data;
+      },
         setUser(state,userdata){
             state.user.data=userdata
         },
@@ -233,6 +252,10 @@ const store= createStore({
             state.user.token=null;
             sessionStorage.removeItem("TOKEN");
         },
+        syncForms(state,id){
+          state.forms.data=state.forms.data.filter(f=>f.id !==id);
+         
+        }
       
     },
     modules:{},
