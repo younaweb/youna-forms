@@ -212,11 +212,17 @@ const store= createStore({
               return response.data;
             })
           }else{
-
+            // debugger;
             return axiosClient.post('/forms',model)
             .then((response)=>{
+              console.log('reponse attendu :',response);
+              // debugger;
               commit('setCurrentForm',response.data)
+              
               return response.data;
+              
+            }).catch(er=>{
+              console.log(er);
             })
 
           }

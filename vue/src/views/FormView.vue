@@ -176,7 +176,7 @@
                         <QuestionEditor 
                         :question="question"
                         :index="index"
-                        @change="changeQuestion"
+                        @change="questionChange"
                         @addQuestion="addQuestion"
                         @deleteQuestion="deleteQuestion"
                         />
@@ -212,7 +212,7 @@ import store from "../store";
 const route = useRoute();
 const router = useRouter();
 
-// Create empty survey
+// Create empty form
 let model = ref({
     title: "",
     slug: "",
@@ -235,7 +235,7 @@ watch(
   (newVal, oldVal) => {
     model.value = {
       ...JSON.parse(JSON.stringify(newVal)),
-      status: !!newVal.status,
+       status: newVal.status !== "draft",
     };
   }
 );
@@ -274,9 +274,26 @@ function deleteQuestion(question) {
   model.value.questions = model.value.questions.filter((q) => q !== question);
 }
 
+function questionChange(question) {
+  // Important to explicitelly assign question.data.options, because otherwise it is a Proxy object
+  // and it is lost in JSON.stringify()
+  if (question.data.options) {
+    question.data.options = [...question.data.options];
+  }
+  model.value.questions = model.value.questions.map((q) => {
+    if (q.id === question.id) {
+      return JSON.parse(JSON.stringify(question));
+    }
+    return q;
+  });
+}
+
+
 function saveForm() {
     store.dispatch('saveFormInfo',model.value)
     .then((response)=>{
+        
+        
         router.push({
             name:'FormView',
             params:{id:response.data.id}
