@@ -21,4 +21,9 @@ class Form extends Model
             ->generateSlugsFrom('title')
             ->saveSlugsTo('slug');
     }
+
+    public function Questions()
+    {
+        return $this->hasMany(FormQuestion::class);
+    }
 }

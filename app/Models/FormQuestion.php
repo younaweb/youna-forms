@@ -8,4 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class FormQuestion extends Model
 {
     use HasFactory;
+    protected $guarded=[];
+    public function Form()
+    {
+        return $this->belongsTo(Form::class);
+    }
 }

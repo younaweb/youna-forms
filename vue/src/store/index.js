@@ -208,6 +208,7 @@ const store= createStore({
           if(model.id){
             return axiosClient.put('/forms/'+model.id,model)
             .then((response)=>{
+  
               commit('setCurrentForm',response.data)
               return response.data;
             })
@@ -215,7 +216,7 @@ const store= createStore({
             // debugger;
             return axiosClient.post('/forms',model)
             .then((response)=>{
-              console.log('reponse attendu :',response);
+              // console.log('reponse attendu :',response);
               // debugger;
               commit('setCurrentForm',response.data)
               
