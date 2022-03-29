@@ -26,9 +26,11 @@
       </router-link>
     </template>
     <div class="flex flex-wrap -m-3"> 
-   <form-component  v-for="form in forms.data"
+   <form-component  v-for="(form,index) in forms.data"
       :key="form.id"
       :form="form"
+      class="opacity-0 animate-fade-in-down"
+      :style="{ animationDelay: `${index * 0.2}s` }"
       @delete="deleteForm(form.id)"
       />
     </div>
@@ -40,6 +42,8 @@ import PageComponent from "../components/PageComponent.vue";
 import FormComponent from "../components/FormComponent.vue";
 import store from "../store";
 import { computed } from "vue";
+import { notify } from "notiwind"
+
 
 store.dispatch('getAllForms');
 const forms = computed(() => store.state.forms);
@@ -49,6 +53,12 @@ function deleteForm(id){
     store.dispatch('deleteForm',id)
     .then(()=>{
       store.commit('syncForms',id);
+           notify({
+       group: "foo",
+       title: "Delete",
+       type:"error",
+        text: "Your Form was deleted succesfully 👌"
+     }, 4000) 
     })
   }
 }

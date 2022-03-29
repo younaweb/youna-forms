@@ -18,6 +18,7 @@ const store= createStore({
           loading:false,
           data:{}
         },
+        update:false,
         forms1: [
             {
               id: 1,
@@ -206,6 +207,7 @@ const store= createStore({
         saveFormInfo({commit},model){
           delete model.image_url; 
           if(model.id){
+            this.state.update=true;
             return axiosClient.put('/forms/'+model.id,model)
             .then((response)=>{
   
@@ -214,6 +216,7 @@ const store= createStore({
             })
           }else{
             // debugger;
+            this.state.update=false;
             return axiosClient.post('/forms',model)
             .then((response)=>{
               // console.log('reponse attendu :',response);

@@ -209,6 +209,8 @@ import { v4 as uuidv4 } from "uuid";
 import { ref,watch,computed } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import store from "../store";
+import { notify } from "notiwind"
+
 const route = useRoute();
 const router = useRouter();
 
@@ -225,6 +227,7 @@ let model = ref({
 });
 
 const formLoading=computed(()=>store.state.currentForm.loading);
+const update=computed(()=>store.state.update);
 
 if (route.params.id) {
     store.dispatch('getCurrentForm',route.params.id);
@@ -245,6 +248,12 @@ function deleteForm(id){
           router.push({
             name: "Forms",
       });
+          notify({
+       group: "foo",
+       title: "Delete",
+       type:"error",
+        text: "Your Form was deleted succesfully 👌"
+     }, 4000) 
       });
   }
 }
@@ -298,6 +307,23 @@ function saveForm() {
             name:'FormView',
             params:{id:response.data.id}
         })
+        if(update.value){
+
+            notify({
+       group: "foo",
+       title: "Success",
+       type:"success",
+        text: "Your Form was updated succesfully 👌"
+     }, 4000) 
+        }else{
+                   notify({
+      group: "foo",
+       title: "Success",
+       type:"info",
+       text: "Your Form was created succesfully 👌"
+     }, 4000) 
+
+        }
     })
     .catch();
 }
