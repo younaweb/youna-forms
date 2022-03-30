@@ -26,7 +26,7 @@ class FormController extends Controller
     public function index()
     {
         $user=auth()->user();
-        $forms=Form::where('user_id',$user->id)->orderBy('created_at','DESC')->paginate(30);
+        $forms=Form::where('user_id',$user->id)->orderBy('created_at','DESC')->paginate(3);
         return FormResource::collection($forms);
     }
 

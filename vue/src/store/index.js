@@ -12,10 +12,12 @@ const store= createStore({
         questionTypes:["text", "select", "radio", "checkbox", "textarea"],
         currentForm: {
           data: {},
+
           loading: false,
         },
         forms:{
           loading:false,
+          links:[],
           data:{}
         },
         update:false,
@@ -151,9 +153,10 @@ const store= createStore({
     },
     getters:{},
     actions:{
-      getAllForms({commit}){
+      getAllForms({commit}, {url = null} = {}){
+        url = url || "/forms";
         commit('setFormsLoading',true);
-        return axiosClient.get('/forms')
+        return axiosClient.get(url)
         .then(res=>{
           commit('setFormsLoading',false);
           commit('setAllForms',res.data);
@@ -248,6 +251,7 @@ const store= createStore({
       },
       setAllForms: (state, form) => {
         state.forms.data = form.data;
+        state.forms.links = form.meta.links;
       },
         setUser(state,userdata){
             state.user.data=userdata
