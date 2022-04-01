@@ -12,7 +12,6 @@ const store= createStore({
         questionTypes:["text", "select", "radio", "checkbox", "textarea"],
         currentForm: {
           data: {},
-
           loading: false,
         },
         forms:{
@@ -163,6 +162,20 @@ const store= createStore({
           
         })
       },
+      viewCurrentForm({commit},slug){
+        commit("setCurrentFormLoading", true);
+        return axiosClient
+          .get(`/public-form/${slug}`)
+          .then((res) => {
+            commit("setCurrentForm", res.data);
+            commit("setCurrentFormLoading", false);
+            return res;
+          })
+          .catch((err) => {
+            commit("setCurrentFormLoading", false);
+            throw err;
+          });
+      },
       getCurrentForm({ commit }, id) {
         commit("setCurrentFormLoading", true);
         return axiosClient
@@ -177,6 +190,38 @@ const store= createStore({
             throw err;
           });
       },
+      saveSurvey({ commit, dispatch }, survey) {
+
+      delete survey.image_url;
+
+      let response;
+      if (survey.id) {
+        response = axiosClient
+          .put(`/survey/${survey.id}`, survey)
+          .then((res) => {
+            commit('setCurrentSurvey', res.data)
+            return res;
+          });
+      } else {
+        response = axiosClient.post("/survey", survey).then((res) => {
+          commit('setCurrentSurvey', res.data)
+          return res;
+        });
+      }
+
+      return response;
+    },
+
+    saveFormAnswer({commit}, {formId, answers}) {
+      return axiosClient.post(`/form/${formId}/answer`, {answers});
+    },
+
+
+
+
+
+
+
         register({commit},user){
             return axiosClient.post('/register',user)
             .then(({data})=>{

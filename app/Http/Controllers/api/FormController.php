@@ -6,7 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\FormQuestionResource;
 use App\Http\Resources\FormResource;
 use App\Models\Form;
+use App\Models\FormAnswer;
 use App\Models\FormQuestion;
+use App\Models\FormQuestionAnswer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
@@ -114,6 +116,50 @@ class FormController extends Controller
             return abort(403,'Unauthorized action');
         }
         return new FormResource($form);
+    }
+    /**
+     * Display the specified resource.
+     *
+     * @param  \App\Models\Form  $form
+     * @return \Illuminate\Http\Response
+     */
+    public function showBySlug(Form $form)
+    {
+
+        
+      
+        return new FormResource($form);
+    }
+
+    public function saveFormAnswer(Request $request, Form $form)
+    {
+        $validated = $request->validate([
+            'answers' => 'required|array'
+        ]);
+
+        $formAnswer = FormAnswer::create([
+            'form_id' => $form->id,
+            'start_date' => date('Y-m-d H:i:s'),
+            'end_date' => date('Y-m-d H:i:s'),
+        ]);
+
+        foreach ($validated['answers'] as $questionId => $answer) {
+            $question = FormQuestion::where(['id' => $questionId, 'form_id' => $form->id])->get();
+            if (!$question) {
+                return response("Invalid question ID: \"$questionId\"", 400);
+            }
+
+            $data = [
+                'form_question_id' => $questionId,
+                'form_answer_id' => $formAnswer->id,
+                'answer' => is_array($answer) ? json_encode($answer) : $answer
+            ];
+
+            $questionAnswer = FormQuestionAnswer::create($data);
+        }
+
+        return response("", 201);
+
     }
 
     /**

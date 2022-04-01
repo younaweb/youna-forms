@@ -3,6 +3,7 @@ import Login from '../views/Login.vue'
 import DefaultLayout from '../components/DefaultLayout.vue'
 import AuthLayout from '../components/AuthLayout.vue'
 import Dashboard from '../views/Dashboard.vue'
+import FormPublicView from '../views/FormPublicView.vue'
 import Forms from '../views/Forms.vue'
 import FormView from '../views/FormView.vue'
 import Register from '../views/Register.vue'
@@ -10,6 +11,11 @@ import store from '../store'
 
 
 const routes=[
+    {
+        path:'/view/form/:slug',
+        name:'PublicView',
+        component:FormPublicView,
+    },
     {
         path:'/',
         redirect:'/dashboard',
