@@ -19,6 +19,10 @@ const store= createStore({
           links:[],
           data:{}
         },
+        dashboard: {
+          loading: false,
+          data: {}
+        },
         update:false,
         forms1: [
             {
@@ -215,6 +219,20 @@ const store= createStore({
     saveFormAnswer({commit}, {formId, answers}) {
       return axiosClient.post(`/form/${formId}/answer`, {answers});
     },
+    getDashboardData({commit}) {
+      commit('dashboardLoading', true)
+      return axiosClient.get(`/dashboard`)
+      .then((res) => {
+        commit('dashboardLoading', false)
+        commit('setDashboardData', res.data)
+        return res;
+      })
+      .catch(error => {
+        commit('dashboardLoading', false)
+        return error;
+      })
+
+    },
 
 
 
@@ -314,6 +332,12 @@ const store= createStore({
         syncForms(state,id){
           state.forms.data=state.forms.data.filter(f=>f.id !==id);
          
+        },
+        dashboardLoading: (state, loading) => {
+          state.dashboard.loading = loading;
+        },
+        setDashboardData: (state, data) => {
+          state.dashboard.data = data
         }
       
     },
