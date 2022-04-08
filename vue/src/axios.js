@@ -3,7 +3,7 @@ import store from "./store";
 // import router from "./router";
 
 const axiosClient = axios.create({
-  baseURL: 'http://youna-forms.test/api'
+  baseURL: `${import.meta.env.VITE_API_BASE_URL}/api`
 })
 
 axiosClient.interceptors.request.use(config => {

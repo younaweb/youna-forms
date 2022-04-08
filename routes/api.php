@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\api\AuthController;
+use App\Http\Controllers\api\DashboardController;
 use App\Http\Controllers\api\FormController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -22,6 +23,7 @@ Route::middleware('auth:sanctum')->group(function(){
     });
     Route::post('/logout',[AuthController::class,'logout'])->name('logout');
     Route::resource('/forms',FormController::class);
+    Route::get('/dashboard', [DashboardController::class, 'index']);
 });
 
 Route::get('/public-form/{form:slug}',[FormController::class,'showBySlug'])->name('showBySlug');

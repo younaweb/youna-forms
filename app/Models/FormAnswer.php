@@ -12,4 +12,9 @@ class FormAnswer extends Model
     public const UPDATED_AT = null;
     protected $guarded=[];
 
+    public function form()
+    {
+        return $this->belongsTo(Form::class);
+    }
+
 }
